@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>لوحة الإدارة - dream</title>
+  <style>
+    body{font-family:"Noto Kufi Arabic",sans-serif;background:#f8f9fa;margin:0;padding:0;color:#222}
+    header{background:#000;color:#fff;padding:15px;display:flex;justify-content:space-between;align-items:center}
+    header h2{margin:0;font-size:20px}
+    header button{padding:8px 14px;border:none;border-radius:8px;cursor:pointer;background:#dc3545;color:#fff;font-weight:bold}
+    main{padding:20px;max-width:1000px;margin:auto}
+    h3{text-align:center;margin-bottom:20px}
+    table{width:100%;border-collapse:collapse;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.08);border-radius:12px;overflow:hidden}
+    th,td{padding:12px 14px;text-align:center;border-bottom:1px solid #eee}
+    th{background:#f1f1f1;font-weight:bold}
+    tr:hover{background:#fafafa}
+  </style>
+</head>
+<body>
+  <header>
+    <h2>لوحة إدارة الطلبات</h2>
+    <button id="logoutBtn">تسجيل الخروج</button>
+  </header>
+
+  <main>
+    <h3>📋 الطلبات المسجلة</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>الاسم</th>
+          <th>المنتج</th>
+          <th>الكمية</th>
+          <th>ملاحظات</th>
+          <th>تاريخ الإنشاء</th>
+        </tr>
+      </thead>
+      <tbody id="ordersTable"></tbody>
+    </table>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // تهيئة Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBREENATtISM3vaAwNqfzEd71LFbIU5G_I",
+      authDomain: "dream-79013.firebaseapp.com",
+      projectId: "dream-79013",
+      storageBucket: "dream-79013.firebasestorage.app",
+      messagingSenderId: "459444402549",
+      appId: "1:459444402549:web:d975fa614b990abab7bb3c"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // حماية الصفحة
+    onAuthStateChanged(auth, async (user)=>{
+      if(!user){
+        window.location.href = "login.html";
+      } else {
+        loadOrders();
+      }
+    });
+
+    // زر تسجيل الخروج
+    document.getElementById("logoutBtn").addEventListener("click", ()=>{
+      signOut(auth).then(()=> window.location.href="login.html");
+    });
+
+    // تحميل الطلبات من Firestore
+    async function loadOrders(){
+      const tableBody = document.getElementById("ordersTable");
+      tableBody.innerHTML = "<tr><td colspan='5'>⏳ جاري التحميل...</td></tr>";
+
+      try {
+        const q = query(collection(db,"contact"), orderBy("createdAt","desc"));
+        const snapshot = await getDocs(q);
+
+        tableBody.innerHTML = "";
+        snapshot.forEach(doc=>{
+          const d = doc.data();
+          const row = `
+            <tr>
+              <td>${d.name||"—"}</td>
+              <td>${d.product||"—"}</td>
+              <td>${d.quantity||"—"}</td>
+              <td>${d.note||"—"}</td>
+              <td>${d.createdAt?.toDate ? d.createdAt.toDate().toLocaleString("ar-EG") : "—"}</td>
+            </tr>`;
+          tableBody.innerHTML += row;
+        });
+
+        if(snapshot.empty){
+          tableBody.innerHTML = "<tr><td colspan='5'>🚫 لا توجد طلبات حتى الآن</td></tr>";
+        }
+      } catch (err) {
+        console.error("Error loading orders:", err);
+        tableBody.innerHTML = "<tr><td colspan='5'>❌ حدث خطأ أثناء تحميل البيانات</td></tr>";
+      }
+    }
+  </script>
+</body>
+</html>

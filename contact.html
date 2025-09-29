@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>dream — تواصل</title>
+  <style>
+    :root{ --bg:#fff; --txt:#111; --muted:#666; --card:#fff; --border:rgba(0,0,0,.12); --shadow:0 10px 30px rgba(0,0,0,.06); --btn:#000; --btnTxt:#fff; }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,"Noto Kufi Arabic",sans-serif}
+    .container{max-width:1000px;margin:auto;padding:20px}
+    h1{font-size:28px;margin:20px 0;text-align:center;color:#222}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+    .muted{color:var(--muted)}
+    .btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--btn);background:var(--btn);color:var(--btnTxt);padding:12px 16px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center}
+    .btn:focus{outline:2px dashed #000;outline-offset:3px}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    input,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff;color:#111;outline:none}
+    textarea{min-height:120px;resize:vertical}
+    @media(max-width:700px){.row{flex-direction:column}}
+    /* رسالة النجاح */
+    .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:999}
+    .success-card{background:#fff;padding:30px 40px;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.3);text-align:center;max-width:300px}
+    .success-card h3{margin:0 0 10px;color:green}
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>تواصل مع <strong>dream</strong></h1>
+
+    <article class="card">
+      <h2>استعلام سريع</h2>
+      <form id="contactForm" novalidate>
+        <label for="name">الاسم (اختياري)</label>
+        <input id="name" type="text" placeholder="اسمك (اختياري)">
+        <div class="row">
+          <div style="flex:1">
+            <label for="pid">كود/اسم المنتج</label>
+            <input id="pid" required placeholder="مثال: d2 أو تيشيرت dream">
+          </div>
+          <div style="width:160px">
+            <label for="qty">الكمية</label>
+            <input id="qty" type="number" min="1" step="1" value="1" required>
+          </div>
+        </div>
+        <label for="msg">ملاحظات</label>
+        <textarea id="msg" placeholder="أي تفاصيل إضافية…"></textarea>
+        <div class="row" style="margin-top:12px">
+          <button type="button" id="btnWhatsApp" class="btn">💬 إرسال عبر واتساب</button>
+          <button type="button" id="btnFirebase" class="btn" style="background:#007bff;border-color:#007bff">📩 إرسال لخدمة العملاء</button>
+        </div>
+        <p id="formHint" class="muted" style="margin-top:8px"></p>
+      </form>
+    </article>
+  </main>
+
+  <!-- بطاقة رسالة النجاح -->
+  <div class="overlay" id="successOverlay">
+    <div class="success-card">
+      <h3>✅ تم الإرسال بنجاح</h3>
+      <p>شكراً لتواصلك مع خدمة العملاء</p>
+      <button onclick="document.getElementById('successOverlay').style.display='none'" class="btn" style="margin-top:10px">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // تهيئة Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBREENATtISM3vaAwNqfzEd71LFbIU5G_I",
+      authDomain: "dream-79013.firebaseapp.com",
+      projectId: "dream-79013",
+      storageBucket: "dream-79013.firebasestorage.app",
+      messagingSenderId: "459444402549",
+      appId: "1:459444402549:web:d975fa614b990abab7bb3c",
+      measurementId: "G-J00SJ0DBF8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // عناصر الفورم
+    const form = document.getElementById('contactForm');
+    const btnWhatsApp = document.getElementById('btnWhatsApp');
+    const btnFirebase = document.getElementById('btnFirebase');
+    const hint = document.getElementById('formHint');
+
+    function getFormData(){
+      const sanitize = s => (s||'').toString().replace(/[<>"']/g,'').trim();
+      return {
+        name: sanitize(document.getElementById('name').value),
+        pid: sanitize(document.getElementById('pid').value),
+        qty: Math.max(1, parseInt(document.getElementById('qty').value || '1', 10)),
+        note: sanitize(document.getElementById('msg').value)
+      }
+    }
+
+    // زر واتساب
+    btnWhatsApp.addEventListener('click', ()=>{
+      const {name,pid,qty,note} = getFormData();
+      if(!pid){ hint.textContent='⚠️ رجاءً أدخل كود/اسم المنتج.';hint.style.color='#c00';return;}
+      const body=`مرحباً 👋 أود الاستعلام/الطلب:
+الاسم: ${name||'—'}
+المنتج: ${pid}
+الكمية: ${qty}
+ملاحظات: ${note||'—'}
+(أُرسل من صفحة التواصل dream)`;
+      window.open('https://wa.me/966504317267?text='+encodeURIComponent(body),'_blank','noopener');
+      hint.textContent='✅ تم فتح واتساب';hint.style.color='#090';
+    });
+
+    // زر Firebase (خدمة العملاء)
+    btnFirebase.addEventListener('click', async ()=>{
+      const {name,pid,qty,note} = getFormData();
+      if(!pid){ hint.textContent='⚠️ رجاءً أدخل كود/اسم المنتج.';hint.style.color='#c00';return;}
+      try{
+        await addDoc(collection(db,"contact"),{
+          name:name||"—",
+          product:pid,
+          quantity:qty,
+          note:note||"—",
+          createdAt:new Date()
+        });
+        document.getElementById('successOverlay').style.display='flex';
+      }catch(err){
+        console.error("Firestore Error:",err);
+        hint.textContent='❌ خطأ أثناء الإرسال';hint.style.color='#c00';
+      }
+    });
+  </script>
+</body>
+</html>

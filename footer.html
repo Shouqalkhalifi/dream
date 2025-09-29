@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <title>dream - تذييل</title>
+  <style>
+    :root{ --txt:#111; --muted:#666; --border:rgba(0,0,0,.12); }
+    body{margin:0;background:transparent;color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Kufi Arabic",sans-serif}
+    footer{border-top:1px solid var(--border); background:#fff;}
+    .wrap{max-width:1200px; margin:auto; padding:30px 20px; display:grid; gap:20px; grid-template-columns: 1.3fr 1fr 1fr;}
+    h4{margin:0 0 10px; font-size:16px;color:#111}
+    p, a, label{color:var(--muted)}
+    a{text-decoration:none}
+    a:hover{color:#000}
+    .newsletter{display:flex; gap:8px}
+    .newsletter input{flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:#fff; color:#111; outline:none}
+    .newsletter button{border:1px solid #000; background:#000; color:#fff; padding:10px 14px; border-radius:10px; font-weight:800; cursor:pointer}
+    .bottom{border-top:1px solid var(--border); padding:12px 20px; display:flex; align-items:center; justify-content:space-between}
+    .social{display:flex; gap:10px}
+    .badge{border:1px dashed var(--border); padding:6px 10px; border-radius:999px; font-size:12px; color:#444}
+    @media(max-width:880px){ .wrap{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+<footer>
+  <div class="wrap">
+    <section>
+      <h4>عن dream</h4>
+      <p>متجر عصري يقدّم منتجات رقمية قابلة للتنزيل ومنتجات ملموسة مع توصيل سريع. ثيم أبيض نظيف وأزرار سوداء.</p>
+      <span class="badge">موثوق · بسيط · سريع</span>
+    </section>
+    <section>
+      <h4>روابط</h4>
+      <nav aria-label="روابط التذييل">
+        <p><a href="index.html#products">المنتجات</a></p>
+        <p><a href="contact.html">تواصل</a></p>
+        <p><a href="index.html#cart">السلة</a></p>
+      </nav>
+    </section>
+    <section>
+      <h4>النشرة البريدية</h4>
+      <form class="newsletter" onsubmit="return false" aria-label="النشرة">
+        <label for="nl" class="sr-only">البريد الإلكتروني</label>
+        <input id="nl" type="email" placeholder="example@mail.com" inputmode="email" autocomplete="email" required>
+        <button id="nlBtn" type="button">اشتركي</button>
+      </form>
+      <p id="nlMsg" role="status" aria-live="polite"></p>
+    </section>
+  </div>
+  <div class="bottom">
+    <small>© <span id="y"></span> dream</small>
+    <div class="social" aria-label="اجتماعي">
+      <a href="#" rel="noopener">X</a>
+      <a href="#" rel="noopener">GitHub</a>
+      <a href="#" rel="noopener">Dribbble</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  function sanitize(s){return (s||"").toString().replace(/[<>"']/g,"");}
+  function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
+
+  document.getElementById('nlBtn')?.addEventListener('click', ()=>{
+    const input = document.getElementById('nl');
+    const email = sanitize(input.value.trim());
+    const msg = document.getElementById('nlMsg');
+    if(!validEmail(email)){
+      msg.textContent = "رجاءً أدخلي بريدًا صالحًا.";
+      msg.style.color = "#c00";
+      return;
+    }
+    msg.textContent = "تم الاشتراك بنجاح! 🎉";
+    msg.style.color = "#090";
+    input.value = "";
+  });
+</script>
+</body>
+</html>
