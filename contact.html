@@ -3,28 +3,40 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' https://www.gstatic.com; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; connect-src 'self'; base-uri 'self'; form-action 'self'">
   <title>dream — تواصل</title>
   <style>
-    :root{ --bg:#fff; --txt:#111; --muted:#666; --card:#fff; --border:rgba(0,0,0,.12); --shadow:0 10px 30px rgba(0,0,0,.06); --btn:#000; --btnTxt:#fff; }
+    :root{
+      --bg:#0b0d11; --panel:#0f1115; --card:#121722;
+      --txt:#eef1f5; --muted:#a6b0c0; --border:rgba(255,255,255,.08);
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+      --btn:#3ba9ff; --btnTxt:#051018;
+    }
     *{box-sizing:border-box}
     html,body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,"Noto Kufi Arabic",sans-serif}
     .container{max-width:1000px;margin:auto;padding:20px}
-    h1{font-size:28px;margin:20px 0;text-align:center;color:#222}
+    h1{font-size:28px;margin:20px 0;text-align:center;color:#fff}
     .card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
     .muted{color:var(--muted)}
-    .btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--btn);background:var(--btn);color:var(--btnTxt);padding:12px 16px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none;text-align:center}
-    .btn:focus{outline:2px dashed #000;outline-offset:3px}
+    .btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:10px;border:1px solid transparent;background:var(--btn);color:var(--btnTxt);padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer;text-decoration:none;text-align:center}
+    .btn.secondary{background:transparent;border-color:var(--border);color:var(--txt)}
     .row{display:flex;gap:10px;flex-wrap:wrap}
-    input,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff;color:#111;outline:none}
+    label{display:block;margin:6px 0 6px}
+    input,textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#0f141f;color:var(--txt);outline:none}
     textarea{min-height:120px;resize:vertical}
     @media(max-width:700px){.row{flex-direction:column}}
+
     /* رسالة النجاح */
     .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:999}
-    .success-card{background:#fff;padding:30px 40px;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.3);text-align:center;max-width:300px}
-    .success-card h3{margin:0 0 10px;color:green}
+    .success-card{background:#0f141f;padding:30px 40px;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.5);text-align:center;max-width:320px;border:1px solid var(--border)}
+    .success-card h3{margin:0 0 10px;color:#22c55e}
   </style>
 </head>
 <body>
+  <!-- استدعاء هيدر/فوتر -->
+  <div id="app-header" aria-hidden="true"></div>
+
   <main class="container">
     <h1>تواصل مع <strong>dream</strong></h1>
 
@@ -38,7 +50,7 @@
             <label for="pid">كود/اسم المنتج</label>
             <input id="pid" required placeholder="مثال: d2 أو تيشيرت dream">
           </div>
-          <div style="width:160px">
+          <div style="width:180px">
             <label for="qty">الكمية</label>
             <input id="qty" type="number" min="1" step="1" value="1" required>
           </div>
@@ -47,12 +59,14 @@
         <textarea id="msg" placeholder="أي تفاصيل إضافية…"></textarea>
         <div class="row" style="margin-top:12px">
           <button type="button" id="btnWhatsApp" class="btn">💬 إرسال عبر واتساب</button>
-          <button type="button" id="btnFirebase" class="btn" style="background:#007bff;border-color:#007bff">📩 إرسال لخدمة العملاء</button>
+          <button type="button" id="btnFirebase" class="btn secondary">📩 إرسال لخدمة العملاء</button>
         </div>
         <p id="formHint" class="muted" style="margin-top:8px"></p>
       </form>
     </article>
   </main>
+
+  <div id="app-footer" aria-hidden="true"></div>
 
   <!-- بطاقة رسالة النجاح -->
   <div class="overlay" id="successOverlay">
@@ -63,12 +77,29 @@
     </div>
   </div>
 
-  <!-- Firebase SDK -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    /* تضمين الهيدر والفوتر */
+    async function include(id, file){
+      const el = document.getElementById(id);
+      try{
+        const res = await fetch(file, {cache:"no-store"}); if(!res.ok) throw 0;
+        const html = await res.text();
+        el.innerHTML = html;
+        el.querySelectorAll('script').forEach(old=>{
+          const s=document.createElement('script'); if(old.type) s.type=old.type;
+          s.textContent=old.textContent; el.appendChild(s); old.remove();
+        });
+        el.setAttribute('aria-hidden','false');
+      }catch{ el.innerHTML = '<div class="container" style="color:#f88">تعذّر تحميل '+file+'</div>'; }
+    }
+    await include('app-header','header.html');
+    await include('app-footer','footer.html');
 
-    // تهيئة Firebase
+    /* Firebase SDK (https) */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    // تهيئة Firebase (البيانات من ملفك)
     const firebaseConfig = {
       apiKey: "AIzaSyBREENATtISM3vaAwNqfzEd71LFbIU5G_I",
       authDomain: "dream-79013.firebaseapp.com",
@@ -78,7 +109,6 @@
       appId: "1:459444402549:web:d975fa614b990abab7bb3c",
       measurementId: "G-J00SJ0DBF8"
     };
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
@@ -88,8 +118,8 @@
     const btnFirebase = document.getElementById('btnFirebase');
     const hint = document.getElementById('formHint');
 
+    function sanitize(s){return (s||'').toString().replace(/[<>"']/g,'').trim();}
     function getFormData(){
-      const sanitize = s => (s||'').toString().replace(/[<>"']/g,'').trim();
       return {
         name: sanitize(document.getElementById('name').value),
         pid: sanitize(document.getElementById('pid').value),
@@ -101,7 +131,7 @@
     // زر واتساب
     btnWhatsApp.addEventListener('click', ()=>{
       const {name,pid,qty,note} = getFormData();
-      if(!pid){ hint.textContent='⚠️ رجاءً أدخل كود/اسم المنتج.';hint.style.color='#c00';return;}
+      if(!pid){ hint.textContent='⚠️ رجاءً أدخلي كود/اسم المنتج.';hint.style.color='#f99';return;}
       const body=`مرحباً 👋 أود الاستعلام/الطلب:
 الاسم: ${name||'—'}
 المنتج: ${pid}
@@ -109,25 +139,22 @@
 ملاحظات: ${note||'—'}
 (أُرسل من صفحة التواصل dream)`;
       window.open('https://wa.me/966504317267?text='+encodeURIComponent(body),'_blank','noopener');
-      hint.textContent='✅ تم فتح واتساب';hint.style.color='#090';
+      hint.textContent='✅ تم فتح واتساب';hint.style.color='#9f9';
     });
 
-    // زر Firebase (خدمة العملاء)
+    // زر Firebase (خدمة العملاء) مع إدارة أخطاء واضحة
     btnFirebase.addEventListener('click', async ()=>{
       const {name,pid,qty,note} = getFormData();
-      if(!pid){ hint.textContent='⚠️ رجاءً أدخل كود/اسم المنتج.';hint.style.color='#c00';return;}
+      if(!pid){ hint.textContent='⚠️ رجاءً أدخلي كود/اسم المنتج.';hint.style.color='#f99';return;}
       try{
         await addDoc(collection(db,"contact"),{
-          name:name||"—",
-          product:pid,
-          quantity:qty,
-          note:note||"—",
-          createdAt:new Date()
+          name:name||"—", product:pid, quantity:qty, note:note||"—", createdAt:serverTimestamp()
         });
         document.getElementById('successOverlay').style.display='flex';
+        hint.textContent=''; form.reset();
       }catch(err){
         console.error("Firestore Error:",err);
-        hint.textContent='❌ خطأ أثناء الإرسال';hint.style.color='#c00';
+        hint.textContent='❌ خطأ أثناء الإرسال. تحقّقي من الاتصال ثم أعيدي المحاولة.'; hint.style.color='#f88';
       }
     });
   </script>

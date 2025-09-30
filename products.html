@@ -6,59 +6,60 @@
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'self'; form-action 'self'">
   <title>dream — المنتجات</title>
-  <meta name="description" content="منتجات dream: رقمية للتنزيل الفوري وملموسة مع توصيل سريع. ثيم أبيض نظيف وأزرار سوداء.">
-
+  <meta name="description" content="جميع منتجات dream: رقمية للتنزيل وملموسة مع توصيل سريع.">
   <style>
     :root{
-      /* نفس لوحة الألوان البيضاء المستخدمة عندك */
-      --bg:#ffffff; --txt:#111111; --muted:#666666;
-      --card:#ffffff; --border:rgba(0,0,0,.14); --shadow:0 8px 30px rgba(0,0,0,.06);
-      --btn:#000000; --btnTxt:#ffffff; --chip:#f4f4f4;
+      --bg:#0b0d11; --panel:#0f1115; --card:#121722;
+      --txt:#eef1f5; --muted:#a6b0c0; --border:rgba(255,255,255,.08);
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+      --btn:#3ba9ff; --btnTxt:#051018; --chip:#101522; --badge:#1b2230;
     }
     *{box-sizing:border-box}
     html,body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Kufi Arabic",sans-serif}
-    a{color:#000;text-decoration:none}
+    a{color:var(--txt);text-decoration:none}
     .container{max-width:1200px;margin:auto;padding:20px}
 
-    /* العنوان وأدوات التحكم */
     .page-head{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:8px 0 16px}
     .title{font-size:28px;margin:0}
     .controls{display:flex;gap:10px;align-items:center}
     .filters{display:flex;gap:8px}
     .chip{
-      border:1px solid var(--border); background:var(--chip); color:#111; padding:8px 12px;
+      border:1px solid var(--border); background:var(--chip); color:var(--txt); padding:8px 12px;
       border-radius:999px; cursor:pointer; font-weight:700
     }
-    .chip.active{background:#000;color:#fff;border-color:#000}
+    .chip.active{background:var(--btn); color:var(--btnTxt); border-color:transparent}
     select{
-      border:1px solid var(--border); background:#fff; color:#111; padding:9px 12px; border-radius:10px; outline:none
+      border:1px solid var(--border); background:var(--card); color:var(--txt); padding:9px 12px; border-radius:10px; outline:none
     }
 
-    /* شبكة المنتجات (مطابقة للأسلوب) */
     .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
     .card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s, box-shadow .15s}
     .card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
-    .thumb{aspect-ratio:16/10;background:#fafafa;display:flex;align-items:center;justify-content:center;font-size:40px}
+    .thumb{aspect-ratio:16/10;background:#0f141f;display:flex;align-items:center;justify-content:center;font-size:40px}
     .content{padding:14px}
     .name{font-weight:800;margin:0 0 6px}
     .muted{color:var(--muted);font-size:13px}
     .row{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
-    .badge{border:1px dashed var(--border);padding:4px 8px;border-radius:999px;font-size:12px;color:#444}
+    .badge{border:1px dashed var(--border);padding:4px 8px;border-radius:999px;font-size:12px;color:var(--muted);background:var(--badge)}
     .actions{margin-top:12px;display:flex;gap:8px}
     .btn{flex:1;border:none;background:var(--btn);color:var(--btnTxt);padding:10px 12px;border-radius:10px;font-weight:800;cursor:pointer;text-align:center}
-    .btn.outline{background:#fff;color:#000;border:1px solid #000}
+    .btn.outline{background:transparent;color:var(--txt);border:1px solid var(--border)}
 
-    /* سلة الشراء (مودال) نفس النمط لكن أبيض */
-    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:60}
+    /* مودال السلة */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:65}
     .overlay.show{display:flex}
-    .cart{width:min(560px,92vw);background:#fff;border:1px solid var(--border);border-radius:20px;padding:16px;box-shadow:var(--shadow);color:#111}
+    .cart{width:min(560px,92vw);background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:16px;box-shadow:var(--shadow);color:var(--txt)}
     .cart h3{margin:0 0 10px}
-    .cart .r{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.08)}
+    .cart .r{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--border)}
     .cart .r:last-child{border-bottom:none}
     .qty{display:flex;gap:8px;align-items:center}
-    .qty button{border:1px solid rgba(0,0,0,.25);background:#fff;color:#111;padding:4px 8px;border-radius:8px;cursor:pointer}
+    .qty button{border:1px solid var(--border);background:transparent;color:var(--txt);padding:4px 8px;border-radius:8px;cursor:pointer}
     .checkout{margin-top:12px;display:flex;gap:8px;justify-content:flex-end}
     .checkout .btn{min-width:140px}
+
+    /* Toasts */
+    .toasts{position:fixed;inset:auto 16px 16px auto;display:flex;flex-direction:column;gap:10px;z-index:80}
+    .toast{background:#0f141f;color:var(--txt);border:1px solid var(--border);padding:10px 12px;border-radius:12px;box-shadow:var(--shadow);min-width:240px}
 
     @media (max-width:1100px){ .grid{grid-template-columns:repeat(3,1fr)} }
     @media (max-width:700px){ .grid{grid-template-columns:repeat(2,1fr)} }
@@ -106,8 +107,11 @@
     </div>
   </div>
 
+  <!-- Toasts -->
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="true"></div>
+
   <script type="module">
-    /* تضمين الهيدر والفوتر بنفس أسلوب الصفحات */
+    /* تضمين الهيدر والفوتر */
     async function include(id, file){
       const el = document.getElementById(id);
       try{
@@ -119,12 +123,14 @@
           s.textContent=old.textContent; el.appendChild(s); old.remove();
         });
         el.setAttribute('aria-hidden','false');
-      }catch{}
+      }catch{
+        el.innerHTML = '<div class="container" style="color:#f88">تعذّر تحميل '+file+'</div>';
+      }
     }
     await include('app-header','header.html');
     await include('app-footer','footer.html');
 
-    /* نفس بيانات المنتجات لضمان التناسق */
+    /* بيانات */
     const products = [
       {id:'d1', type:'digital', title:'قالب UI أبيض/أسود', desc:'Figma + SVG', price:69, icon:'⬛', stock:Infinity, pop:92},
       {id:'d2', type:'digital', title:'بايثون باك: أدوات تحليل', desc:'CLI + Docs', price:119, icon:'⬜', stock:Infinity, pop:88},
@@ -136,22 +142,28 @@
       {id:'p4', type:'physical', title:'ملصقات Minimal', desc:'مجموعة 10 قطع', price:25, icon:'🏷️', stock:50, pop:60},
     ];
 
-    /* عناصر */
     const grid = document.getElementById('grid');
     const chips = document.querySelectorAll('.chip');
     const sortSel = document.getElementById('sort');
 
-    /* سلة محلية متناسقة */
     const CART_KEY = 'dream.cart.v1';
     const cart = new Map(JSON.parse(localStorage.getItem(CART_KEY) || '[]'));
-    const persistCart = () => localStorage.setItem(CART_KEY, JSON.stringify([...cart.entries()]));
+    const persistCart = () => { localStorage.setItem(CART_KEY, JSON.stringify([...cart.entries()])); window.dispatchEvent(new Event('dream:cartUpdated')); };
     const money = v => new Intl.NumberFormat('ar-SA',{style:'currency',currency:'SAR'}).format(v);
 
-    /* واتساب للاستعلام */
+    /* إشعار */
+    const toasts = document.getElementById('toasts');
+    function toast(msg){
+      const t = document.createElement('div'); t.className='toast'; t.textContent = msg;
+      toasts.appendChild(t); setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateY(8px)'; }, 2200);
+      setTimeout(()=> t.remove(), 2800);
+    }
+
     function waLink(title){
       const body = `مرحباً، أود الاستعلام عن المنتج: ${title}`;
       return 'https://wa.me/966504317267?text=' + encodeURIComponent(body);
     }
+    const norm = s => (s||'').toString().toLowerCase();
 
     function applySort(list){
       const v = sortSel.value;
@@ -160,15 +172,23 @@
       return list.slice().sort((a,b)=>b.pop-a.pop);
     }
 
-    /* رسم الشبكة */
-    let currentFilter = 'all', currentSearch = '';
+    /* رسم */
+    let currentFilter='all', currentSearch='';
     function render(filter='all', search=''){
-      const q = (search||'').trim().toLowerCase();
+      const q = norm(search).trim();
       grid.innerHTML='';
-      let list = products.filter(p => (filter==='all' || p.type===filter))
-                         .filter(p => !q || p.title.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+      let list = products
+        .filter(p => (filter==='all' || p.type===filter))
+        .filter(p => !q || norm(p.title).includes(q) || norm(p.desc).includes(q));
       list = applySort(list);
 
+      if(list.length===0){
+        const empty = document.createElement('div');
+        empty.className='card';
+        empty.innerHTML = `<div class="content"><h3 class="name">لا نتائج</h3><div class="muted">جرّبي كلمة أقصر أو مختلفة.</div></div>`;
+        grid.appendChild(empty);
+        return;
+      }
       for(const p of list){
         const el = document.createElement('article');
         el.className='card';
@@ -183,7 +203,7 @@
             </div>
             <div class="actions">
               <button class="btn" data-id="${p.id}" ${p.stock===0?'disabled':''}>${p.stock===0?'غير متوفر':'أضف للسلة'}</button>
-              <a class="btn outline" href="${waLink(p.title)}" target="_blank" rel="noopener" title="الاستعلام عبر واتساب">واتساب</a>
+              <a class="btn outline" href="${waLink(p.title)}" target="_blank" rel="noopener">واتساب</a>
             </div>
           </div>`;
         grid.appendChild(el);
@@ -198,30 +218,60 @@
     }));
     sortSel.addEventListener('change', ()=> render(currentFilter, currentSearch));
 
-    /* استلام البحث من الهيدر */
+    /* دعم #digital / #physical من الرابط */
+    function applyHash(){
+      const h = (location.hash||'').replace('#','');
+      if(['digital','physical','all'].includes(h)){
+        currentFilter = h; chips.forEach(x=>x.classList.toggle('active', x.dataset.filter===h));
+        render(currentFilter, currentSearch);
+      }
+    }
+    window.addEventListener('hashchange', applyHash); applyHash();
+
+    /* استقبال البحث من الهيدر */
     window.addEventListener('dream:search', (e)=>{
       currentSearch = (e.detail?.value || '').toString();
       render(currentFilter, currentSearch);
       grid.scrollIntoView({behavior:'smooth', block:'start'});
     });
 
-    /* مودال السلة */
+    /* === السلة: وضع سريع/كامل === */
     const overlay = document.getElementById('cartOverlay');
     const rows = document.getElementById('cartRows');
     const closeCartBtn = document.getElementById('closeCart');
     const checkoutBtn = document.getElementById('checkoutBtn');
+    let cartMode = 'full';
 
-    function openCart(){ drawCart(); overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false'); }
-    function closeCart(){ overlay.classList.remove('show'); overlay.setAttribute('aria-hidden','true'); }
+    function setCartMode(mode){
+      cartMode = (mode==='quick') ? 'quick' : 'full';
+      if(cartMode==='quick'){
+        checkoutBtn.textContent = 'عرض السلة';
+        checkoutBtn.onclick = ()=>{ setCartMode('full'); };
+      }else{
+        checkoutBtn.textContent = 'إتمام الشراء';
+        checkoutBtn.onclick = onCheckout;
+      }
+    }
+    function openCart(mode='full'){
+      setCartMode(mode);
+      drawCart();
+      overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
+    }
+    function closeCart(){
+      overlay.classList.remove('show'); overlay.setAttribute('aria-hidden','true');
+    }
     closeCartBtn.addEventListener('click', closeCart);
     overlay.addEventListener('click', e=>{ if(e.target===overlay) closeCart(); });
-    window.addEventListener('dream:openCart', openCart);
+    window.addEventListener('dream:openCart', ()=> openCart('full'));
 
+    // إضافة للسلة -> وضع سريع
     document.addEventListener('click', e=>{
       const btn = e.target.closest('button[data-id]'); if(!btn) return;
       const id = btn.getAttribute('data-id'); const item = products.find(p=>p.id===id); if(!item) return;
       if(item.type==='physical' && (cart.get(id)||0) >= item.stock){ alert('تجاوزت المتاح في المخزون لهذا المنتج.'); return; }
-      cart.set(id, (cart.get(id)||0)+1); persistCart(); openCart();
+      cart.set(id, (cart.get(id)||0)+1); localStorage.setItem(CART_KEY, JSON.stringify([...cart.entries()])); window.dispatchEvent(new Event('dream:cartUpdated'));
+      toast(`أُضيف "${item.title}" إلى السلة`);
+      openCart('quick');
     });
 
     function drawCart(){
@@ -237,10 +287,10 @@
             <div class="muted">${money(p.price)} × ${qty}</div>
           </div>
           <div class="qty">
-            <button data-op="dec" data-id="${id}" aria-label="نقص">−</button>
-            <span>${qty}</span>
-            <button data-op="inc" data-id="${id}" aria-label="زيادة">+</button>
             <button data-op="del" data-id="${id}" aria-label="حذف">🗑️</button>
+            <button data-op="inc" data-id="${id}" aria-label="زيادة">+</button>
+            <span>${qty}</span>
+            <button data-op="dec" data-id="${id}" aria-label="نقص">−</button>
           </div>`;
         rows.appendChild(r);
       }
@@ -255,18 +305,24 @@
       const item = products.find(p=>p.id===id); if(!item) return;
       if(op==='inc'){
         if(item.type==='physical' && (cart.get(id)||0) >= item.stock){ alert('لا يوجد مخزون إضافي.'); return; }
-        cart.set(id,(cart.get(id)||0)+1);
+        cart.set(id,(cart.get(id)||0)+1); toast(`زِيدت كمية "${item.title}"`);
       }else if(op==='dec'){
-        const n=(cart.get(id)||0)-1; if(n<=0) cart.delete(id); else cart.set(id,n);
-      }else if(op==='del'){ cart.delete(id); }
-      persistCart(); drawCart();
+        const n=(cart.get(id)||0)-1;
+        if(n<=0){ cart.delete(id); toast(`أُزيل "${item.title}" من السلة`); }
+        else { cart.set(id,n); toast(`نُقصت كمية "${item.title}"`); }
+      }else if(op==='del'){
+        cart.delete(id); toast(`حُذف "${item.title}" من السلة`);
+      }
+      localStorage.setItem(CART_KEY, JSON.stringify([...cart.entries()])); window.dispatchEvent(new Event('dream:cartUpdated'));
+      drawCart();
     });
 
-    checkoutBtn.addEventListener('click', ()=>{
+    function onCheckout(){
       if(cart.size===0){ alert('السلة فارغة.'); return; }
       alert('شكرًا لك! تم تسجيل طلبك مبدئيًا (نموذج).');
-      cart.clear(); persistCart(); drawCart(); closeCart();
-    });
+      cart.clear(); localStorage.setItem(CART_KEY, JSON.stringify([...cart.entries()])); window.dispatchEvent(new Event('dream:cartUpdated'));
+      drawCart(); closeCart();
+    }
   </script>
 </body>
 </html>

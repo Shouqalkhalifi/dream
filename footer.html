@@ -4,21 +4,27 @@
   <meta charset="utf-8" />
   <title>dream - تذييل</title>
   <style>
-    :root{ --txt:#111; --muted:#666; --border:rgba(0,0,0,.12); }
+    :root{
+      --bg:#0f1115; --card:#0f1115; --band:#0b0d11;
+      --txt:#eef1f5; --muted:#a6b0c0; --border:rgba(255,255,255,.08);
+      --pill:#1b2230; --accent:#3ba9ff;
+    }
     body{margin:0;background:transparent;color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Kufi Arabic",sans-serif}
-    footer{border-top:1px solid var(--border); background:#fff;}
-    .wrap{max-width:1200px; margin:auto; padding:30px 20px; display:grid; gap:20px; grid-template-columns: 1.3fr 1fr 1fr;}
-    h4{margin:0 0 10px; font-size:16px;color:#111}
-    p, a, label{color:var(--muted)}
+    footer{border-top:1px solid var(--border); background:linear-gradient(0deg,var(--band),var(--card)); color:var(--txt)}
+    .wrap{max-width:1200px; margin:auto; padding:28px 20px; display:grid; gap:22px; grid-template-columns:1.2fr 1fr 1fr 1fr;}
+    h4{margin:0 0 10px; font-size:16px}
+    p, a, small{color:var(--muted)}
     a{text-decoration:none}
-    a:hover{color:#000}
-    .newsletter{display:flex; gap:8px}
-    .newsletter input{flex:1; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:#fff; color:#111; outline:none}
-    .newsletter button{border:1px solid #000; background:#000; color:#fff; padding:10px 14px; border-radius:10px; font-weight:800; cursor:pointer}
+    a:hover{color:var(--txt)}
+    .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--pill);border:1px solid var(--border);font-size:12px}
+    .list a{display:block;padding:8px 10px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;background:transparent}
+    .list a:hover{background:#121722}
     .bottom{border-top:1px solid var(--border); padding:12px 20px; display:flex; align-items:center; justify-content:space-between}
     .social{display:flex; gap:10px}
-    .badge{border:1px dashed var(--border); padding:6px 10px; border-radius:999px; font-size:12px; color:#444}
-    @media(max-width:880px){ .wrap{grid-template-columns:1fr} }
+    .soc{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:999px;border:1px solid var(--border);background:var(--pill)}
+    .soc:hover{border-color:#2b3444}
+    @media(max-width:880px){ .wrap{grid-template-columns:1fr 1fr} }
+    @media(max-width:580px){ .wrap{grid-template-columns:1fr} }
   </style>
 </head>
 <body>
@@ -26,56 +32,41 @@
   <div class="wrap">
     <section>
       <h4>عن dream</h4>
-      <p>متجر عصري يقدّم منتجات رقمية قابلة للتنزيل ومنتجات ملموسة مع توصيل سريع. ثيم أبيض نظيف وأزرار سوداء.</p>
-      <span class="badge">موثوق · بسيط · سريع</span>
+      <p>متجر عصري يقدّم منتجات رقمية قابلة للتنزيل ومنتجات ملموسة مع توصيل سريع. تصميم موحّد ومريح للعينين.</p>
+      <span class="chip">موثوق · بسيط · سريع</span>
     </section>
     <section>
-      <h4>روابط</h4>
-      <nav aria-label="روابط التذييل">
-        <p><a href="index.html#products">المنتجات</a></p>
-        <p><a href="contact.html">تواصل</a></p>
-        <p><a href="index.html#cart">السلة</a></p>
+      <h4>المتجر</h4>
+      <nav class="list" aria-label="روابط المتجر">
+        <a href="products.html">المنتجات</a>
+        <a href="contact.html">تواصل</a>
       </nav>
     </section>
     <section>
-      <h4>النشرة البريدية</h4>
-      <form class="newsletter" onsubmit="return false" aria-label="النشرة">
-        <label for="nl" class="sr-only">البريد الإلكتروني</label>
-        <input id="nl" type="email" placeholder="example@mail.com" inputmode="email" autocomplete="email" required>
-        <button id="nlBtn" type="button">اشتركي</button>
-      </form>
-      <p id="nlMsg" role="status" aria-live="polite"></p>
+      <h4>حسابي</h4>
+      <nav class="list" aria-label="إدارة الحساب">
+        <a href="#">المفضلات</a>
+        <a href="#">طلباتي</a>
+        <a href="#">حسابي</a>
+      </nav>
+    </section>
+    <section>
+      <h4>تابعنا</h4>
+      <div class="social" aria-label="حسابات التواصل">
+        <a class="soc" href="#" aria-label="X" rel="noopener">X</a>
+        <a class="soc" href="#" aria-label="GitHub" rel="noopener">GH</a>
+        <a class="soc" href="#" aria-label="Dribbble" rel="noopener">Db</a>
+      </div>
     </section>
   </div>
   <div class="bottom">
     <small>© <span id="y"></span> dream</small>
-    <div class="social" aria-label="اجتماعي">
-      <a href="#" rel="noopener">X</a>
-      <a href="#" rel="noopener">GitHub</a>
-      <a href="#" rel="noopener">Dribbble</a>
-    </div>
+    <small>مبني بالحب 💙</small>
   </div>
 </footer>
 
 <script>
   document.getElementById('y').textContent = new Date().getFullYear();
-
-  function sanitize(s){return (s||"").toString().replace(/[<>"']/g,"");}
-  function validEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
-
-  document.getElementById('nlBtn')?.addEventListener('click', ()=>{
-    const input = document.getElementById('nl');
-    const email = sanitize(input.value.trim());
-    const msg = document.getElementById('nlMsg');
-    if(!validEmail(email)){
-      msg.textContent = "رجاءً أدخلي بريدًا صالحًا.";
-      msg.style.color = "#c00";
-      return;
-    }
-    msg.textContent = "تم الاشتراك بنجاح! 🎉";
-    msg.style.color = "#090";
-    input.value = "";
-  });
 </script>
 </body>
 </html>
